@@ -18,16 +18,17 @@ job = st.selectbox("Job (0: unemployed, 1: unskilled, 2: skilled, 3: highly skil
 credit_amount = st.number_input("Credit Amount", min_value=0, value=1000)
 duration = st.number_input("Duration (in months)", min_value=1, max_value=72, value=12)
 sex = st.selectbox("Sex", options=["male", "female"])
-housing = st.selectbox("Housing", options=["own", "free", "rent"])
-saving_accounts = st.selectbox("Saving Accounts", options=["little", "moderate", "quite rich", "rich", "no_info"])
-checking_account = st.selectbox("Checking Account", options=["little", "moderate", "rich", "no_info"])
+housing = st.selectbox("Housing", options=["own", "rent"])  # Removed 'free' as unseen
+saving_accounts = st.selectbox("Saving Accounts", options=["moderate", "quite rich", "rich"])  # Removed 'little', 'no_info'
+checking_account = st.selectbox("Checking Account", options=["moderate", "rich"])  # Removed 'little', 'no_info'
 purpose = st.selectbox("Purpose", options=["car", "furniture/equipment", "radio/TV", "domestic appliances", 
-                                         "repairs", "education", "business", "vacation/others"])
+                                          "repairs", "education"])  # Removed 'business', 'vacation/others'
 
 # Button to trigger prediction
 if st.button("Predict"):
     # Prepare input data
     input_data = {
+        'Unnamed: 0': 0,  # Dummy value for index column
         'Age': age,
         'Job': job,
         'Credit amount': credit_amount,
@@ -45,15 +46,14 @@ if st.button("Predict"):
     # Perform one-hot encoding
     input_encoded = pd.get_dummies(input_df, columns=['Sex', 'Housing', 'Saving accounts', 'Checking account', 'Purpose'])
     
-    # Hardcode expected columns (based on training with drop_first=False and NA categories)
+    # Hardcode expected columns (based on training with drop_first=True and Unnamed: 0)
     expected_columns = [
-        'Age', 'Job', 'Credit amount', 'Duration',
-        'Sex_male', 'Sex_female',
-        'Housing_own', 'Housing_free', 'Housing_rent',
-        'Saving accounts_little', 'Saving accounts_moderate', 'Saving accounts_quite rich', 'Saving accounts_rich', 'Saving accounts_no_info',
-        'Checking account_little', 'Checking account_moderate', 'Checking account_rich', 'Checking account_no_info',
-        'Purpose_car', 'Purpose_furniture/equipment', 'Purpose_radio/TV', 'Purpose_domestic appliances',
-        'Purpose_repairs', 'Purpose_education', 'Purpose_business', 'Purpose_vacation/others'
+        'Unnamed: 0', 'Age', 'Job', 'Credit amount', 'Duration',
+        'Sex_male', 'Housing_own', 'Housing_rent',
+        'Saving accounts_moderate', 'Saving accounts_quite rich', 'Saving accounts_rich',
+        'Checking account_moderate', 'Checking account_rich',
+        'Purpose_car', 'Purpose_furniture/equipment', 'Purpose_radio/TV',
+        'Purpose_domestic appliances', 'Purpose_repairs', 'Purpose_education'
     ]
     
     # Align input columns
