@@ -19,8 +19,8 @@ credit_amount = st.number_input("Credit Amount", min_value=0, value=1000)
 duration = st.number_input("Duration (in months)", min_value=1, max_value=72, value=12)
 sex = st.selectbox("Sex", options=["male", "female"])
 housing = st.selectbox("Housing", options=["own", "free", "rent"])
-saving_accounts = st.selectbox("Saving Accounts", options=["little", "moderate", "quite rich", "rich"])
-checking_account = st.selectbox("Checking Account", options=["little", "moderate", "rich"])
+saving_accounts = st.selectbox("Saving Accounts", options=["little", "moderate", "quite rich", "rich", "no_info"])
+checking_account = st.selectbox("Checking Account", options=["little", "moderate", "rich", "no_info"])
 purpose = st.selectbox("Purpose", options=["car", "furniture/equipment", "radio/TV", "domestic appliances", 
                                          "repairs", "education", "business", "vacation/others"])
 
@@ -45,15 +45,15 @@ if st.button("Predict"):
     # Perform one-hot encoding
     input_encoded = pd.get_dummies(input_df, columns=['Sex', 'Housing', 'Saving accounts', 'Checking account', 'Purpose'])
     
-    # Hardcode expected columns (based on training with drop_first=True)
+    # Hardcode expected columns (based on training with drop_first=False and NA categories)
     expected_columns = [
         'Age', 'Job', 'Credit amount', 'Duration',
-        'Sex_male', 'Housing_own', 'Housing_rent',
-        'Saving accounts_moderate', 'Saving accounts_quite rich', 'Saving accounts_rich',
-        'Checking account_moderate', 'Checking account_rich',
-        'Purpose_car', 'Purpose_furniture/equipment', 'Purpose_radio/TV',
-        'Purpose_domestic appliances', 'Purpose_repairs', 'Purpose_education',
-        'Purpose_business'
+        'Sex_male', 'Sex_female',
+        'Housing_own', 'Housing_free', 'Housing_rent',
+        'Saving accounts_little', 'Saving accounts_moderate', 'Saving accounts_quite rich', 'Saving accounts_rich', 'Saving accounts_no_info',
+        'Checking account_little', 'Checking account_moderate', 'Checking account_rich', 'Checking account_no_info',
+        'Purpose_car', 'Purpose_furniture/equipment', 'Purpose_radio/TV', 'Purpose_domestic appliances',
+        'Purpose_repairs', 'Purpose_education', 'Purpose_business', 'Purpose_vacation/others'
     ]
     
     # Align input columns
