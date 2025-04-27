@@ -2,6 +2,61 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+# Custom CSS for styling
+st.markdown("""
+<style>
+    .main {
+        background-color: #f5f7fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .stButton>button {
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+    }
+    .sidebar .sidebar-content {
+        background-color: #e8ecef;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    .stSelectbox, .stNumberInput {
+        background-color: white;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    h1 {
+        color: #2c3e50;
+        font-family: 'Arial', sans-serif;
+    }
+    h3 {
+        color: #34495e;
+        font-family: 'Arial', sans-serif;
+    }
+    .prediction-box {
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+    }
+    .approved {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .denied {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Load the trained model and feature names
 model = joblib.load("knn_model.pkl")
 
@@ -14,29 +69,24 @@ except FileNotFoundError:
 
 # Function to collect user input
 def user_input_features():
-    st.subheader("Applicant Details")
-    st.write("Enter the details below to assess credit risk:")
+    st.sidebar.header("📋 Applicant Details")
+    st.sidebar.write("Enter the details below to assess credit risk:")
 
-    col1, col2 = st.columns(2)
-
-    # Input fields
-    with col1:
-        age = st.number_input("Age (e.g., 35)", min_value=18, max_value=100, value=30, step=1, help="Enter the applicant's age")
-        job = st.number_input("Job type (e.g., 0, 1, 2, 3)", min_value=0, max_value=3, value=1, step=1, help="Enter the job type (0: unskilled, 3: highly skilled)")
-        housing = st.selectbox("Housing", ["own", "free", "rent"], help="Select the applicant's housing status")
-        saving_accounts = st.selectbox("Saving Accounts", ["little", "moderate", "rich", "quite rich", "unknown"], help="Select the saving account status")
-        credit_amount = st.number_input("Credit Amount (e.g., 1000)", min_value=0, value=1000, step=100, help="Enter the credit amount requested (in dollars)")
-
-    with col2:
-        sex = st.selectbox("Sex", ["male", "female"], help="Select the applicant's gender")
-        checking_account = st.selectbox("Checking Account", ["little", "moderate", "rich", "unknown"], help="Select the checking account status")
-        duration = st.number_input("Duration (in months, e.g., 12)", min_value=1, value=12, step=1, help="Enter the duration of the loan in months")
-        purpose = st.selectbox(
-            "Purpose",
-            ["business", "car", "domestic appliances", "education", "furniture/equipment", 
-             "radio/TV", "repairs", "vacation/others"],
-            help="Select the purpose of the loan"
-        )
+    # Input fields in sidebar
+    age = st.sidebar.number_input("Age (e.g., 35)", min_value=18, max_value=100, value=30, step=1, help="Enter the applicant's age")
+    sex = st.sidebar.selectbox("Sex", ["male", "female"], help="Select the applicant's gender")
+    job = st.sidebar.number_input("Job type (e.g., 0, 1, 2, 3)", min_value=0, max_value=3, value=1, step=1, help="Enter the job type (0: unskilled, 3: highly skilled)")
+    housing = st.sidebar.selectbox("Housing", ["own", "free", "rent"], help="Select the applicant's housing status")
+    saving_accounts = st.sidebar.selectbox("Saving Accounts", ["little", "moderate", "rich", "quite rich", "unknown"], help="Select the saving account status")
+    checking_account = st.sidebar.selectbox("Checking Account", ["little", "moderate", "rich", "unknown"], help="Select the checking account status")
+    credit_amount = st.sidebar.number_input("Credit Amount (e.g., 1000)", min_value=0, value=1000, step=100, help="Enter the credit amount requested (in dollars)")
+    duration = st.sidebar.number_input("Duration (in months, e.g., 12)", min_value=1, value=12, step=1, help="Enter the duration of the loan in months")
+    purpose = st.sidebar.selectbox(
+        "Purpose",
+        ["business", "car", "domestic appliances", "education", "furniture/equipment", 
+         "radio/TV", "repairs", "vacation/others"],
+        help="Select the purpose of the loan"
+    )
 
     # Collect inputs into a dictionary
     data = {
@@ -78,6 +128,11 @@ def preprocess_input(input_df):
 def main():
     st.title("🏦 Credit Risk Prediction")
     st.write("This application predicts whether a loan application will be **Approved** or **Denied** based on the applicant's details.")
+    st.markdown("---")
+
+    # Display a welcome message or placeholder in the main area
+    st.subheader("Welcome to the Credit Risk Predictor")
+    st.write("Use the sidebar on the left to enter the applicant's details and click 'Predict Risk' to see the result.")
 
     input_df = user_input_features()
 
@@ -86,7 +141,7 @@ def main():
         processed_input = preprocess_input(input_df)
 
         # Debugging: Show processed input
-        with st.expander("Processed Input (Debugging)"):
+        with st.expander("🔍 Processed Input (Debugging)"):
             st.write("The processed input data used for prediction:")
             st.dataframe(processed_input)
 
@@ -95,11 +150,11 @@ def main():
             prediction = model.predict(processed_input)
             prediction_label = "Approved" if prediction[0] == 0 else "Denied"
 
-            # Display prediction with color coding
+            # Display prediction with styled box
             if prediction_label == "Approved":
-                st.success(f"### Prediction: {prediction_label}")
+                st.markdown(f'<div class="prediction-box approved">Prediction: {prediction_label}</div>', unsafe_allow_html=True)
             else:
-                st.error(f"### Prediction: {prediction_label}")
+                st.markdown(f'<div class="prediction-box denied">Prediction: {prediction_label}</div>', unsafe_allow_html=True)
         except ValueError as e:
             st.error(f"Error during prediction: {str(e)}")
 
