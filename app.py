@@ -18,20 +18,20 @@ job = st.selectbox("Job (0: unemployed, 1: unskilled, 2: skilled, 3: highly skil
 credit_amount = st.number_input("Credit Amount", min_value=0, value=1000)
 duration = st.number_input("Duration (in months)", min_value=1, max_value=72, value=12)
 sex = st.selectbox("Sex", options=["male", "female"])
-housing = st.selectbox("Housing", options=["own", "rent"])  # Removed 'free' as unseen
-saving_accounts = st.selectbox("Saving Accounts", options=["moderate", "quite rich", "rich"])  # Removed 'little', 'no_info'
-checking_account = st.selectbox("Checking Account", options=["moderate", "rich"])  # Removed 'little', 'no_info'
+housing = st.selectbox("Housing", options=["own", "rent"])
+saving_accounts = st.selectbox("Saving Accounts", options=["moderate", "quite rich", "rich"])
+checking_account = st.selectbox("Checking Account", options=["moderate", "rich"])
 purpose = st.selectbox("Purpose", options=["car", "furniture/equipment", "radio/TV", "domestic appliances", 
-                                          "repairs", "education"])  # Removed 'business', 'vacation/others'
+                                          "repairs", "education"])
 
 # Button to trigger prediction
 if st.button("Predict"):
     # Prepare input data
     input_data = {
-        'Unnamed: 0': 0,  # Dummy value for index column
+        'Unnamed: 0': 0,  # Add dummy value for index column
         'Age': age,
         'Job': job,
-        'Credit amount': credit_amount,
+        'Credit amount': credit_amount,  # Use space instead of underscore
         'Duration': duration,
         'Sex': sex,
         'Housing': housing,
@@ -46,7 +46,7 @@ if st.button("Predict"):
     # Perform one-hot encoding
     input_encoded = pd.get_dummies(input_df, columns=['Sex', 'Housing', 'Saving accounts', 'Checking account', 'Purpose'])
     
-    # Hardcode expected columns (based on training with drop_first=True and Unnamed: 0)
+    # Hardcode expected columns (adjusted for likely training data)
     expected_columns = [
         'Unnamed: 0', 'Age', 'Job', 'Credit amount', 'Duration',
         'Sex_male', 'Housing_own', 'Housing_rent',
