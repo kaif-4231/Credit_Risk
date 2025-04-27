@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # Load the trained model and feature names
-model = joblib.load("credit_risk.pkl")
+model = joblib.load("knn_model.pkl")
 
 # Load the feature names used during training
 try:
