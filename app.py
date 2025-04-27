@@ -28,10 +28,9 @@ purpose = st.selectbox("Purpose", options=["car", "furniture/equipment", "radio/
 if st.button("Predict"):
     # Prepare input data
     input_data = {
-        'Unnamed: 0': 0,  # Add dummy value for index column
         'Age': age,
         'Job': job,
-        'Credit amount': credit_amount,  # Use space instead of underscore
+        'Credit_amount': credit_amount,  # Use underscore
         'Duration': duration,
         'Sex': sex,
         'Housing': housing,
@@ -48,7 +47,7 @@ if st.button("Predict"):
     
     # Hardcode expected columns (adjusted for likely training data)
     expected_columns = [
-        'Unnamed: 0', 'Age', 'Job', 'Credit amount', 'Duration',
+        'Age', 'Job', 'Credit_amount', 'Duration',
         'Sex_male', 'Housing_own', 'Housing_rent',
         'Saving accounts_moderate', 'Saving accounts_quite rich', 'Saving accounts_rich',
         'Checking account_moderate', 'Checking account_rich',
